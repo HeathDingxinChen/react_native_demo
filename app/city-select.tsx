@@ -1,59 +1,66 @@
 import {Pressable, StyleSheet, TextInput, Text, View, Dimensions, FlatList} from "react-native";
 import {router, Stack, useLocalSearchParams} from 'expo-router';
 import {useEffect, useState} from "react";
+import {useDispatch, useSelector} from "react-redux";
+import {AppDispatch, RootState} from "@/store/store";
+import {fetchAirportsMetaData} from "@/store/airportsMetaDataSlice";
+import {useAppDispatch, useAppSelector} from "@/store/hooks";
+import {getOdPairsMetaData} from "@/api/client";
 
 export default function CitySelectScreen() {
 
     const {directionType, departureAirportCode} = useLocalSearchParams();
 
     const [keyword, setKeyword] = useState('')
-    const [filtedList, setFiltedList] = useState<any[]>([])
     const [oDPairList, setODPairList] = useState<Record<string, { destinations?: string[] }>>({})
-    const [airportDetailList, setAirportDetailList] = useState<Record<string, any>>({})
     const [shownCitySelectList, setShownCitySelectList] = useState<any[]>([])
+
+    const dispatch = useAppDispatch();
+    const airportDetailList = useAppSelector((state: RootState) => {
+        return state.airportMetaData.airportMetaDataMap
+    })
+    useEffect(() => {
+        if (Object.keys(airportDetailList).length === 0) {
+            dispatch(fetchAirportsMetaData())
+        }
+        getOdPairsMetaData()
+            .then(setODPairList)
+            .catch(err => console.log(err))
+    }, []);
 
 
     useEffect(() => {
-            Promise.all([
-                fetch('https://t0.api.osc1.ct1.cathaypacific.com/meta-mobile/v1/airports/en_HK')
-                    .then(res => res.json())
-                    .catch(err => console.log(err)),
-                fetch('https://t0.api.osc1.ct1.cathaypacific.com/flightstatus-mobile/v1/odPairs')
-                    .then(res => res.json())
-                    .catch(err => console.log(err))])
-                .then(([airportDetailListResult, oDPairListResult]) => {
-                    setODPairList(oDPairListResult);
-                    setAirportDetailList(airportDetailListResult);
-                    if (!departureAirportCode) {
-                        const result = Object.entries(oDPairListResult)
-                            .filter(([key]) => airportDetailListResult[key])
-                            .map(([key, value]) => {
-                                const airportDetail = airportDetailListResult[key]
-                                return {
-                                    key,
-                                    ...airportDetail
-                                }
-                            }).map(item => {
-                                return item
-                            })
-                        setShownCitySelectList(result)
-                        setFiltedList(result)
-                    } else {
-                        const result = oDPairListResult[departureAirportCode as string]
-                            ?.destinations
-                            ?.map((key: string) => {
-                                const airportDetail = airportDetailListResult[key]
-                                return {
-                                    key,
-                                    ...airportDetail
-                                }
-                            }) ?? []
-                        setShownCitySelectList(result)
-                        setFiltedList(result)
+        if (!departureAirportCode) {
+            const fullList = Object.entries(oDPairList)
+                .filter(([key]) => airportDetailList[key])
+                .map(([key, value]) => {
+                    const airportDetail = airportDetailList[key]
+                    return {
+                        key,
+                        ...airportDetail
                     }
+                }).map(item => {
+                    return item
                 })
-        }, []
-    )
+            setShownCitySelectList(fullList)
+        } else {
+            const fullList = oDPairList[departureAirportCode as string]
+                ?.destinations
+                ?.map((key: string) => {
+                    const airportDetail = airportDetailList[key]
+                    return {
+                        key,
+                        ...airportDetail
+                    }
+                }) ?? []
+            setShownCitySelectList(fullList)
+        }
+
+    }, [oDPairList, airportDetailList]);
+
+    const filteredList = shownCitySelectList.filter(item => {
+        return item.airport?.defaultName?.toLocaleLowerCase().includes(keyword.toLocaleLowerCase())
+    })
 
 
     return (
@@ -70,10 +77,6 @@ export default function CitySelectScreen() {
                 <TextInput style={styles.textInput}
                            value={keyword}
                            onChangeText={(keyword) => {
-                               const filteredList = shownCitySelectList.filter(item => {
-                                   return item.airport?.defaultName?.toLocaleLowerCase().includes(keyword.toLocaleLowerCase())
-                               })
-                               setFiltedList(filteredList)
 
                                return setKeyword(keyword)
                            }}
@@ -93,7 +96,7 @@ export default function CitySelectScreen() {
             </View>
             <View style={styles.cityListContainer}>
                 <FlatList
-                    data={filtedList}
+                    data={filteredList}
                     keyExtractor={(item) => item.key}
                     renderItem={({item}) => (
                         <Pressable style={styles.cityButton} onPress={() => {

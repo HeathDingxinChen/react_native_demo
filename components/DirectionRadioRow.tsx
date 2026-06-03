@@ -1,9 +1,9 @@
 import {Pressable, StyleSheet, Text, View} from 'react-native'
 
 type PropTypes = {
-    directionType: 0 | 1
-    activeDirection: number;
-    onPressDirectionChange: (value: number) => void;
+    directionType: 'A' | 'D'
+    activeDirection: 'A' | 'D';
+    onPressDirectionChange: (value: 'A' | 'D') => void;
 };
 
 function DirectionRadioRow({directionType, activeDirection, onPressDirectionChange}: PropTypes) {
@@ -11,7 +11,7 @@ function DirectionRadioRow({directionType, activeDirection, onPressDirectionChan
         <View style={[styles.radioSelectRow, {
             marginBottom: 10,
         }]}>
-            <View style={directionType === 0 && styles.centerBorder}>
+            <View style={directionType === 'A' && styles.centerBorder}>
                 <Pressable style={[styles.radioRow,
                 ]} onPress={() => {
                     onPressDirectionChange(directionType)
@@ -19,8 +19,8 @@ function DirectionRadioRow({directionType, activeDirection, onPressDirectionChan
                     <View style={styles.circleOuter}>
                         {activeDirection === directionType && <View style={styles.circleInner}></View>}
                     </View>
-                    {directionType === 0 && <Text style={[styles.directionFont,]}>Arriving</Text>}
-                    {directionType === 1 && <Text style={[styles.directionFont,]}>Departing</Text>}
+                    {directionType === 'A' && <Text style={[styles.directionFont,]}>Arriving</Text>}
+                    {directionType === 'D' && <Text style={[styles.directionFont,]}>Departing</Text>}
                 </Pressable>
             </View>
         </View>

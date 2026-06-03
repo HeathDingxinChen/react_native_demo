@@ -1,5 +1,4 @@
 import {Text, StyleSheet, View, Pressable, Dimensions} from 'react-native'
-import React, {useState} from 'react'
 
 
 
@@ -40,8 +39,6 @@ const styles = StyleSheet.create({
     searchTabContainer: {
         backgroundColor: 'white',
         justifyContent: 'center',
-        alignItems: 'center',
-        width: Dimensions.get('window').width,
         flexDirection: 'row'
     },
     searchTabBox: {

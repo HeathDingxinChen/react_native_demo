@@ -4,23 +4,31 @@ import {Ionicons} from "@expo/vector-icons";
 type PropTypes = {
     showDates: boolean,
     onShowDatesChange: (value: boolean) => void,
-    selectedDate: string
-    onSelectedDateChange: (value: string) => void
+    selectedDate: {
+        dateStr: string
+        date: Date
+    }
+    onSelectedDateChange: (value: {
+        dateStr: string
+        date: Date
+    }) => void
 };
 
 function TimeSelectButton({showDates, selectedDate, onShowDatesChange, onSelectedDateChange}: PropTypes) {
 
 
-   const dateList = [-3, -2, -1, 0, 1, 2, 3].map(offset => {
+    const dateList = [-3, -2, -1, 0, 1, 2, 3].map(offset => {
         const date = new Date();
         date.setDate(date.getDate() + offset);
         return date;
     })
 
     const dateLabelList = dateList.map(date => {
-        return date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
+        return {
+            dateStr: date.toLocaleDateString('en-GB', {day: '2-digit', month: 'short'}),
+            date: date
+        };
     })
-
 
 
     return (
@@ -29,7 +37,7 @@ function TimeSelectButton({showDates, selectedDate, onShowDatesChange, onSelecte
                 <Pressable style={styles.dateButton} onPress={() => {
                     onShowDatesChange(!showDates)
                 }}>
-                    <Text style={styles.dateText}>{selectedDate}</Text>
+                    <Text style={styles.dateText}>{selectedDate.dateStr}</Text>
                     <Ionicons style={styles.dateIcon} name="chevron-down" size={20}
                               color="rgb(50,115,140)"/>
                 </Pressable>
@@ -43,11 +51,11 @@ function TimeSelectButton({showDates, selectedDate, onShowDatesChange, onSelecte
                 <Pressable style={styles.backdrop} onPress={() => onShowDatesChange(false)}>
                     <View style={styles.modalContent}>
                         {dateLabelList.map((item) => (
-                            <Pressable key={item} onPress={() => {
+                            <Pressable key={item.dateStr} onPress={() => {
                                 onSelectedDateChange(item)
                                 onShowDatesChange(false)
                             }}>
-                                <Text style={styles.dropdownItem}>{item}</Text>
+                                <Text style={styles.dropdownItem}>{item.dateStr}</Text>
                             </Pressable>
                         ))}
                     </View>

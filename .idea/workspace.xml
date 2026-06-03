@@ -5,19 +5,20 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="88a9c4c2-43f4-47fd-8d4a-31d88b07c090" name="Changes" comment="Add initial project files including ContentView and configuration">
-      <change afterPath="$PROJECT_DIR$/app/city-select.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/components/CheckStatusButton.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/components/CitySelectRow.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/components/DirectionRadioRow.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/components/SearchTab.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/components/TimeSelectButton.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/client.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/FlightDetail.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/store/airportsMetaDataSlice.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/store/hooks.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/store/store.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/types/airportMetaData.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/types/flightStatusResponse.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/(tabs)/_layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(tabs)/_layout.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/(tabs)/explore.tsx" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/app/(tabs)/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(tabs)/index.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/_layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/_layout.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/modal.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/city-select.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/city-select.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/DirectionRadioRow.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/DirectionRadioRow.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/SearchTab.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/SearchTab.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/TimeSelectButton.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/TimeSelectButton.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
     </list>
@@ -61,6 +62,7 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/node_modules/@reduxjs/toolkit/dist/index.d.mts" root0="SKIP_INSPECTION" />
     <setting file="file://$PROJECT_DIR$/node_modules/react-native/Libraries/StyleSheet/StyleSheetTypes.d.ts" root0="SKIP_INSPECTION" />
   </component>
   <component name="ProjectColorInfo">{
@@ -89,8 +91,9 @@
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_interpreter_path": "node",
     "nodejs_package_manager_path": "npm",
+    "npm.start --localhost.executor": "Run",
     "npm.start.executor": "Run",
-    "settings.editor.selected.configurable": "editing.templates",
+    "settings.editor.selected.configurable": "preferences.general",
     "ts.external.directory.path": "/Users/heath.dingxin.chen/Work/repo/react_native_demo/node_modules/typescript/lib",
     "vue.rearranger.settings.migration": "true"
   }
@@ -110,19 +113,20 @@
     </key>
   </component>
   <component name="RunManager">
-    <configuration name="start" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+    <configuration name="start --localhost" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
       <package-json value="$PROJECT_DIR$/package.json" />
       <command value="run" />
       <scripts>
         <script value="start" />
       </scripts>
+      <arguments value="--localhost" />
       <node-interpreter value="project" />
       <envs />
       <method v="2" />
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="npm.start" />
+        <item itemvalue="npm.start --localhost" />
       </list>
     </recent_temporary>
   </component>
@@ -143,7 +147,11 @@
       <workItem from="1780077067382" duration="34995000" />
       <workItem from="1780280143566" duration="276000" />
       <workItem from="1780280730089" duration="13361000" />
-      <workItem from="1780300719321" duration="9698000" />
+      <workItem from="1780300719321" duration="24945000" />
+      <workItem from="1780394264267" duration="2574000" />
+      <workItem from="1780396847535" duration="122000" />
+      <workItem from="1780397287174" duration="14848000" />
+      <workItem from="1780470606089" duration="1845000" />
     </task>
     <task id="LOCAL-00001" summary="Add initial project files including ContentView and configuration">
       <option name="closed" value="true" />
@@ -153,7 +161,15 @@
       <option name="project" value="LOCAL" />
       <updated>1780209440721</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Add initial project files including ContentView and configuration">
+      <option name="closed" value="true" />
+      <created>1780366149681</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1780366149681</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
