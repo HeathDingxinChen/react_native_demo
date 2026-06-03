@@ -32,8 +32,14 @@ function FlightDetail({availableFlightList}: PropTypes) {
         if (placeholders.includes('{{ATA}}')) {
             placeholders = placeholders.replace('{{ATA}}', getTimeFromDate(item.legs[0].arrival.latestUpdatedTime.date))
         }
+        if (placeholders.includes('{{ATD}}')) {
+            placeholders = placeholders.replace('{{ATD}}', getTimeFromDate(item.legs[0].arrival.scheduleTime.date))
+        }
+        if (placeholders.includes('{{ETA}}')) {
+            placeholders = placeholders.replace('{{ETA}}', getTimeFromDate(item.legs[0].departure.latestUpdatedTime.date))
+        }
         if (placeholders.includes('{{ETD}}')) {
-            placeholders = placeholders.replace('{{ETD}}', getTimeFromDate(item.legs[0].departure.latestUpdatedTime.date))
+            placeholders = placeholders.replace('{{ETD}}', getTimeFromDate(item.legs[0].departure.scheduleTime.date))
         }
         return placeholders
     }
@@ -135,9 +141,9 @@ function FlightDetail({availableFlightList}: PropTypes) {
                                         </View>
                                         <View style={styles.terminalMarkContainer}>
                                             <Text
-                                                style={styles.terminalMark}>{` ${legItem.departure.terminal ?? '--'} `}</Text>
+                                                style={styles.terminalMark}>{` ${legItem.departure.terminal ?? ''} `}</Text>
                                             <Text
-                                                style={styles.terminalMark}>{` ${legItem.arrival.terminal ?? '--'} `}</Text>
+                                                style={styles.terminalMark}>{` ${legItem.arrival.terminal ?? ''} `}</Text>
                                         </View>
 
 

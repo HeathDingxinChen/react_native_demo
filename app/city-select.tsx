@@ -1,40 +1,73 @@
 import {Pressable, StyleSheet, TextInput, Text, View, Dimensions, FlatList} from "react-native";
 import {router, Stack, useLocalSearchParams} from 'expo-router';
 import {useEffect, useState} from "react";
-import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch, RootState} from "@/store/store";
 import {fetchAirportsMetaData} from "@/store/airportsMetaDataSlice";
 import {useAppDispatch, useAppSelector} from "@/store/hooks";
-import {getOdPairsMetaData} from "@/api/client";
+import {setArrival, setDeparture} from "@/store/citySelectSlice";
+import {fetchOdPairMetaData} from "@/store/odPairMetaDataSlice";
 
 export default function CitySelectScreen() {
 
-    const {directionType, departureAirportCode} = useLocalSearchParams();
+    const {cityDirectionType} = useLocalSearchParams();
 
     const [keyword, setKeyword] = useState('')
-    const [oDPairList, setODPairList] = useState<Record<string, { destinations?: string[] }>>({})
     const [shownCitySelectList, setShownCitySelectList] = useState<any[]>([])
 
     const dispatch = useAppDispatch();
-    const airportDetailList = useAppSelector((state: RootState) => {
+    const airportMetaDataList = useAppSelector((state: RootState) => {
         return state.airportMetaData.airportMetaDataMap
     })
+    const odPairMetaDataMap = useAppSelector((state: RootState) => {
+        return state.odPairMetaData.odPairMetaDataMap
+    })
+
     useEffect(() => {
-        if (Object.keys(airportDetailList).length === 0) {
+        if (Object.keys(airportMetaDataList).length === 0) {
             dispatch(fetchAirportsMetaData())
         }
-        getOdPairsMetaData()
-            .then(setODPairList)
-            .catch(err => console.log(err))
+        if (Object.keys(odPairMetaDataMap).length === 0) {
+            dispatch(fetchOdPairMetaData())
+        }
     }, []);
 
 
+    const departureAirport = useAppSelector((state) => state.citySelect.departure);
+    const arrivalAirport = useAppSelector((state) => state.citySelect.arrival);
+
+
     useEffect(() => {
-        if (!departureAirportCode) {
-            const fullList = Object.entries(oDPairList)
-                .filter(([key]) => airportDetailList[key])
+        console.log(cityDirectionType)
+        console.log(departureAirport.selectedAirportCode)
+        console.log(arrivalAirport.selectedAirportCode)
+        if ('arrival' === cityDirectionType && departureAirport.selectedAirportCode) {
+            const fullList = odPairMetaDataMap[departureAirport.selectedAirportCode as string]
+                ?.destinations
+                ?.map((key: string) => {
+                    const airportDetail = airportMetaDataList[key]
+                    return {
+                        key,
+                        ...airportDetail
+                    }
+                }) ?? []
+            setShownCitySelectList(fullList)
+        } else if ('departure' === cityDirectionType && arrivalAirport.selectedAirportCode) {
+            console.log(55)
+            const fullList = odPairMetaDataMap[arrivalAirport.selectedAirportCode as string]
+                ?.destinations
+                ?.map((key: string) => {
+                    const airportDetail = airportMetaDataList[key]
+                    return {
+                        key,
+                        ...airportDetail
+                    }
+                }) ?? []
+            setShownCitySelectList(fullList)
+        } else {
+            const fullList = Object.entries(odPairMetaDataMap)
+                .filter(([key]) => airportMetaDataList[key])
                 .map(([key, value]) => {
-                    const airportDetail = airportDetailList[key]
+                    const airportDetail = airportMetaDataList[key]
                     return {
                         key,
                         ...airportDetail
@@ -43,20 +76,9 @@ export default function CitySelectScreen() {
                     return item
                 })
             setShownCitySelectList(fullList)
-        } else {
-            const fullList = oDPairList[departureAirportCode as string]
-                ?.destinations
-                ?.map((key: string) => {
-                    const airportDetail = airportDetailList[key]
-                    return {
-                        key,
-                        ...airportDetail
-                    }
-                }) ?? []
-            setShownCitySelectList(fullList)
         }
 
-    }, [oDPairList, airportDetailList]);
+    }, [odPairMetaDataMap, airportMetaDataList]);
 
     const filteredList = shownCitySelectList.filter(item => {
         return item.airport?.defaultName?.toLocaleLowerCase().includes(keyword.toLocaleLowerCase())
@@ -100,13 +122,35 @@ export default function CitySelectScreen() {
                     keyExtractor={(item) => item.key}
                     renderItem={({item}) => (
                         <Pressable style={styles.cityButton} onPress={() => {
-                            router.navigate({
-                                pathname: '/',
-                                params: {
-                                    directionType,
+
+                            if ('departure' === cityDirectionType) {
+
+                                if (departureAirport.selectedAirportCode) {
+                                    dispatch(setArrival({
+                                        selectedAirportCode: null,
+                                        selectedAirportName: null
+                                    },))
+                                }
+
+                                dispatch(setDeparture({
                                     selectedAirportCode: item.key,
                                     selectedAirportName: item.airport?.defaultName,
+                                }))
+                            } else if ('arrival' === cityDirectionType) {
+
+                                if (arrivalAirport.selectedAirportCode) {
+                                    dispatch(setDeparture({
+                                        selectedAirportCode: null,
+                                        selectedAirportName: null
+                                    },))
                                 }
+                                dispatch(setArrival({
+                                    selectedAirportCode: item.key,
+                                    selectedAirportName: item.airport?.defaultName,
+                                }))
+                            }
+                            router.navigate({
+                                pathname: '/',
                             })
                         }}>
                             <Text>{item.airport?.defaultName}({item.key})</Text>

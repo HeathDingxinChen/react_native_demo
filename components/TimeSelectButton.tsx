@@ -25,7 +25,7 @@ function TimeSelectButton({showDates, selectedDate, onShowDatesChange, onSelecte
 
     const dateLabelList = dateList.map(date => {
         return {
-            dateStr: date.toLocaleDateString('en-GB', {day: '2-digit', month: 'short'}),
+            dateStr: date.toLocaleDateString('en-GB', {weekday: 'short', day: '2-digit', month: 'short'}),
             date: date
         };
     })

@@ -1,27 +1,32 @@
 import {Pressable, StyleSheet, Text, View} from 'react-native'
 import {router} from "expo-router";
+import {useAppSelector} from "@/store/hooks";
 
 type PropTypes = {
-    directionType: 'origin' | 'destination'
-    airport: {
-        airportCode?: string
-        airportName?: string
-    }
+    cityDirectionType: 'departure' | 'arrival'
+
 };
 
-function CitySelectRow({directionType, airport}: PropTypes) {
+function CitySelectRow({cityDirectionType}: PropTypes) {
+
+
+    const departureAirport = useAppSelector((state)=>state.citySelect.departure);
+    const arrivalAirport = useAppSelector((state)=>state.citySelect.arrival);
+
+
+
     return (
-        <View style={[styles.citySelectRow]}>
-            <Pressable onPress={() => router.push({
-                pathname: '/city-select',
-                params: {
-                    directionType: directionType
-                }
-            })}><Text
-                style={styles.citySelectText}>
-                {directionType === 'origin' ? (airport.airportName ?? 'Enter departure city') : (airport.airportName ?? 'Enter arrival city')}
-            </Text></Pressable>
-        </View>
+
+        <Pressable style={[styles.citySelectRow]} onPress={() => router.push({
+            pathname: '/city-select',
+            params: {
+                cityDirectionType: cityDirectionType
+            }
+        })}><Text
+            style={styles.citySelectText}>
+            {cityDirectionType === 'departure' ? (departureAirport.selectedAirportName ?? 'Enter departure city') : (arrivalAirport.selectedAirportName?? 'Enter arrival city')}
+        </Text></Pressable>
+
     );
 }
 

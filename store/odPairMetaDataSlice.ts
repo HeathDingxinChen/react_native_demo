@@ -1,13 +1,7 @@
 import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {AirportMetaDataResponse} from "@/types/airportMetaData";
-import {getAirportMetaData, getOdPairsMetaData} from "@/api/client";
+import { getOdPairsMetaData} from "@/api/client";
 
-
-export const fetchAirportsMetaData = createAsyncThunk(
-    'airportsMetaData/fetch',
-    async () => {
-        return getAirportMetaData()
-    })
 
 export const fetchOdPairMetaData = createAsyncThunk(
     'odPairMetaDatafetch',
@@ -17,25 +11,20 @@ export const fetchOdPairMetaData = createAsyncThunk(
 )
 
 
-const airportsDetailsSlice = createSlice({
+const odPairMetaDataSlice = createSlice({
     name: "airportsMetaData",
     initialState: {
-        airportMetaDataMap: {} as AirportMetaDataResponse,
         odPairMetaDataMap: {} as Record<string, { destinations?: string[] }>
 
     },
     reducers: {
-        setAirportsMetaData: (state, action: PayloadAction<AirportMetaDataResponse>) => {
-            state.airportMetaDataMap = action.payload
-        },
+
         setOdPairMetaData: (state, action: PayloadAction<Record<string, { destinations?: string[] }>>) => {
             state.odPairMetaDataMap = action.payload
         },
     },
     extraReducers: (builder) => {
-        builder.addCase(fetchAirportsMetaData.fulfilled, (state, action: PayloadAction<AirportMetaDataResponse>) => {
-            state.airportMetaDataMap = action.payload
-        })
+
         builder.addCase(fetchOdPairMetaData.fulfilled, (state, action: PayloadAction<Record<string, {
             destinations?: string[]
         }>>) => {
@@ -45,5 +34,5 @@ const airportsDetailsSlice = createSlice({
 
 })
 
-export const {setAirportsMetaData, setOdPairMetaData} = airportsDetailsSlice.actions
-export default airportsDetailsSlice.reducer
+export const { setOdPairMetaData} = odPairMetaDataSlice.actions
+export default odPairMetaDataSlice.reducer
