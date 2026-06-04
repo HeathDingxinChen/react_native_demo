@@ -4,7 +4,7 @@ import {useEffect, useState} from "react";
 import {AppDispatch, RootState} from "@/store/store";
 import {fetchAirportsMetaData} from "@/store/airportsMetaDataSlice";
 import {useAppDispatch, useAppSelector} from "@/store/hooks";
-import {setArrival, setDeparture} from "@/store/citySelectSlice";
+import {setArrival, setDeparture} from "@/store/searchFlightParamSlice";
 import {fetchOdPairMetaData} from "@/store/odPairMetaDataSlice";
 
 export default function CitySelectScreen() {
@@ -32,8 +32,8 @@ export default function CitySelectScreen() {
     }, []);
 
 
-    const departureAirport = useAppSelector((state) => state.citySelect.departure);
-    const arrivalAirport = useAppSelector((state) => state.citySelect.arrival);
+    const departureAirport = useAppSelector((state) => state.searchFlightParam.data.departure);
+    const arrivalAirport = useAppSelector((state) => state.searchFlightParam.data.arrival);
 
 
     useEffect(() => {

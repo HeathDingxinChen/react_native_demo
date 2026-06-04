@@ -1,12 +1,16 @@
 import {Pressable, StyleSheet, Text, View} from 'react-native'
+import {useAppDispatch} from "@/store/hooks";
+import {setDirection} from "@/store/searchFlightParamSlice";
 
 type PropTypes = {
     directionType: 'A' | 'D'
     activeDirection: 'A' | 'D';
-    onPressDirectionChange: (value: 'A' | 'D') => void;
 };
 
-function DirectionRadioRow({directionType, activeDirection, onPressDirectionChange}: PropTypes) {
+function DirectionRadioRow({directionType, activeDirection}: PropTypes) {
+
+    const dispatch = useAppDispatch();
+
     return (
         <View style={[styles.radioSelectRow, {
             marginBottom: 10,
@@ -14,7 +18,7 @@ function DirectionRadioRow({directionType, activeDirection, onPressDirectionChan
             <View style={directionType === 'A' && styles.centerBorder}>
                 <Pressable style={[styles.radioRow,
                 ]} onPress={() => {
-                    onPressDirectionChange(directionType)
+                    dispatch(setDirection(directionType))
                 }}>
                     <View style={styles.circleOuter}>
                         {activeDirection === directionType && <View style={styles.circleInner}></View>}

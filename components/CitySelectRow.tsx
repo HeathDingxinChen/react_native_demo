@@ -10,8 +10,8 @@ type PropTypes = {
 function CitySelectRow({cityDirectionType}: PropTypes) {
 
 
-    const departureAirport = useAppSelector((state)=>state.citySelect.departure);
-    const arrivalAirport = useAppSelector((state)=>state.citySelect.arrival);
+    const departureAirport = useAppSelector((state)=>state.searchFlightParam.data.departure);
+    const arrivalAirport = useAppSelector((state)=>state.searchFlightParam.data.arrival);
 
 
 

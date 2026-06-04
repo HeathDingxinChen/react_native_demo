@@ -3,11 +3,8 @@ import {
     Text,
     View,
     ScrollView,
-    Dimensions,
-    Pressable,
     Linking,
     TextInput,
-    FlatList,
     ActivityIndicator, Alert
 } from 'react-native';
 import {useState} from "react";
@@ -25,34 +22,17 @@ import {useAppSelector} from "@/store/hooks";
 
 export default function SearchScreen() {
 
-
-    function onPressDirectionButton(value: 'A' | 'D') {
-        setDirection(value)
-    }
-
     // arriving = 0 departing = 1
-    const [direction, setDirection] = useState<'A' | 'D'>('A')
-    const [showDates, setShowDates] = useState(false)
+    const [showDatesDropList, setShowDatesDropList] = useState(false)
     const [loading, setLoading] = useState(false)
-    const [selectedDate, setSelectedDate] = useState<{
-        dateStr: string
-        date: Date
-    }>({
-        dateStr: new Date().toLocaleDateString('en-GB', {
-            weekday: 'short',
-            day: '2-digit',
-            month: 'short'
-        }),
-        date: new Date()
-    })
-    // by city = 0  by flight number = 1
-    const [activeTab, setActiveTab] = useState(0)
-
     const [availableFlightList, setAvailableFlightList] = useState<FlightStatusResponse>({} as FlightStatusResponse)
 
 
-    const departureAirport = useAppSelector((state) => state.citySelect.departure);
-    const arrivalAirport = useAppSelector((state) => state.citySelect.arrival);
+    const departureAirport = useAppSelector((state) => state.searchFlightParam.data.departure);
+    const arrivalAirport = useAppSelector((state) => state.searchFlightParam.data.arrival);
+    const selectedDate = useAppSelector((state) => state.searchFlightParam.data.date);
+    const activeTab = useAppSelector((state) => state.searchFlightParam.data.activeTab);
+    const direction = useAppSelector((state) => state.searchFlightParam.data.direction);
 
     function clickCheckStatusButton() {
         console.log(dayjs(selectedDate.date).format("YYYY-MM-DD"))
@@ -68,7 +48,6 @@ export default function SearchScreen() {
                 setLoading(false)
             })
             .catch(err => {
-                console.log(err)
                 setLoading(false)
                 Alert.alert(err.message)
             })
@@ -78,7 +57,7 @@ export default function SearchScreen() {
 
         <View style={styles.container}>
 
-            <SearchTab activeTab={activeTab} onActiveTabChange={setActiveTab}/>
+            <SearchTab activeTab={activeTab}/>
             <View style={styles.contentContainer}>
                 {activeTab === 0 && (<View style={{flex: 1}}>
                         <ScrollView
@@ -99,16 +78,15 @@ export default function SearchScreen() {
                             </View>
                             <View style={styles.directionAndDateContainer}>
                                 <View style={[styles.directionSelectContainer]}>
-                                    <DirectionRadioRow directionType={'A'} activeDirection={direction}
-                                                       onPressDirectionChange={setDirection}></DirectionRadioRow>
-                                    <DirectionRadioRow directionType={'D'} activeDirection={direction}
-                                                       onPressDirectionChange={setDirection}></DirectionRadioRow>
+                                    <DirectionRadioRow directionType={'A'}
+                                                       activeDirection={direction}></DirectionRadioRow>
+                                    <DirectionRadioRow directionType={'D'}
+                                                       activeDirection={direction}></DirectionRadioRow>
 
                                 </View>
-                                <TimeSelectButton showDates={showDates}
+                                <TimeSelectButton showDates={showDatesDropList}
                                                   selectedDate={selectedDate}
-                                                  onShowDatesChange={setShowDates}
-                                                  onSelectedDateChange={setSelectedDate}></TimeSelectButton>
+                                                  onShowDatesChange={setShowDatesDropList}></TimeSelectButton>
 
 
                             </View>
@@ -147,10 +125,10 @@ export default function SearchScreen() {
                                 <TextInput style={styles.flightNumberInput} placeholder={"Flight Number"}></TextInput>
                             </View>
                             <View style={styles.directionAndDateContainer}>
-                                <TimeSelectButton showDates={showDates}
+                                <TimeSelectButton showDates={showDatesDropList}
                                                   selectedDate={selectedDate}
-                                                  onShowDatesChange={setShowDates}
-                                                  onSelectedDateChange={setSelectedDate}></TimeSelectButton>
+                                                  onShowDatesChange={setShowDatesDropList}
+                                ></TimeSelectButton>
                             </View>
                             <View style={styles.tipsContainer}>
                                 <Text style={styles.tipsText}>

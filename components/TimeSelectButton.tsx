@@ -1,20 +1,18 @@
 import {Pressable, StyleSheet, Text, View, Modal} from 'react-native'
 import {Ionicons} from "@expo/vector-icons";
+import {useAppDispatch} from "@/store/hooks";
+import {DateFormat, setDate} from "@/store/searchFlightParamSlice";
 
 type PropTypes = {
     showDates: boolean,
     onShowDatesChange: (value: boolean) => void,
-    selectedDate: {
-        dateStr: string
-        date: Date
-    }
-    onSelectedDateChange: (value: {
-        dateStr: string
-        date: Date
-    }) => void
+    selectedDate: DateFormat
 };
 
-function TimeSelectButton({showDates, selectedDate, onShowDatesChange, onSelectedDateChange}: PropTypes) {
+function TimeSelectButton({showDates, selectedDate, onShowDatesChange, }: PropTypes) {
+
+
+    const dispatch = useAppDispatch();
 
 
     const dateList = [-3, -2, -1, 0, 1, 2, 3].map(offset => {
@@ -26,7 +24,7 @@ function TimeSelectButton({showDates, selectedDate, onShowDatesChange, onSelecte
     const dateLabelList = dateList.map(date => {
         return {
             dateStr: date.toLocaleDateString('en-GB', {weekday: 'short', day: '2-digit', month: 'short'}),
-            date: date
+            date: date.toISOString()
         };
     })
 
@@ -52,7 +50,7 @@ function TimeSelectButton({showDates, selectedDate, onShowDatesChange, onSelecte
                     <View style={styles.modalContent}>
                         {dateLabelList.map((item) => (
                             <Pressable key={item.dateStr} onPress={() => {
-                                onSelectedDateChange(item)
+                                dispatch(setDate(item))
                                 onShowDatesChange(false)
                             }}>
                                 <Text style={styles.dropdownItem}>{item.dateStr}</Text>
