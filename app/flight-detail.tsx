@@ -12,6 +12,7 @@ export default function FlightDetailScreen() {
 
     function buildTips(legItem: Leg) {
         let placeholders = legItem?.descriptionMsg?.placeholders;
+        if(!placeholders) return ''
 
         if (placeholders.includes('{{ATA}}')) {
             placeholders = placeholders.replace('{{ATA}}', getTimeFromDate(legItem.arrival.latestUpdatedTime.date))
@@ -43,7 +44,7 @@ export default function FlightDetailScreen() {
 
     function getCityName(airportCode: string) {
         const airportMetaDataElement = airportMetaDataMap[airportCode];
-        return airportMetaDataElement.airport.defaultName
+        return airportMetaDataElement?.airport?.defaultName?? ''
     }
 
     return (<View style={{flex: 1}}>
@@ -86,7 +87,7 @@ export default function FlightDetailScreen() {
                                 <View style={styles.airportMark}>
                                     <Text
                                         style={styles.airportCode}>{legItem.arrival.airport ?? '--'}</Text>
-                                    <Text style={styles.cityTitle}>{getCityName(legItem.departure.airport)}</Text>
+                                    <Text style={styles.cityTitle}>{getCityName(legItem.arrival.airport)}</Text>
                                 </View>
                             </View>
                             <View style={styles.flightNumberContainer}>
@@ -156,15 +157,14 @@ const styles = StyleSheet.create({
         color: 'rgb(175,59,64)'
     },
     normalBackGroundColor: {
-        backgroundColor: 'rgb(189 228 209)'
+        backgroundColor: 'rgb(189,228,209)'
     },
     normalTextColor: {
-        color: 'rgb(59 175 74)'
+        color: 'rgb(59,175,74)'
     },
     flightTips: {},
 
     flightMarkContainer: {
-        paddingHorizontal: "auto",
         flexDirection: 'row',
         justifyContent: 'space-between',
 

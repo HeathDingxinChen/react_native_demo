@@ -1,18 +1,28 @@
-import {Pressable, StyleSheet, TextInput, Text, View, Dimensions, FlatList} from "react-native";
+import {Pressable, StyleSheet, TextInput, Text, View, Dimensions, FlatList, SectionList} from "react-native";
 import {router, Stack, useLocalSearchParams} from 'expo-router';
-import {useEffect, useState} from "react";
+import {useEffect, useMemo, useRef, useState} from "react";
 import {AppDispatch, RootState} from "@/store/store";
 import {fetchAirportsMetaData} from "@/store/airportsMetaDataSlice";
 import {useAppDispatch, useAppSelector} from "@/store/hooks";
 import {setArrival, setDeparture} from "@/store/searchFlightParamSlice";
 import {fetchOdPairMetaData} from "@/store/odPairMetaDataSlice";
+import {AirportMetaData, AirportMetaDataResponse} from "@/types/airportMetaData";
+import groupBy from 'lodash/groupBy'
+import debounce from 'lodash/debounce'
 
 export default function CitySelectScreen() {
 
     const {cityDirectionType} = useLocalSearchParams();
 
     const [keyword, setKeyword] = useState('')
-    const [shownCitySelectList, setShownCitySelectList] = useState<any[]>([])
+    const [debouncedKeyword, setDebouncedKeyword] = useState('')
+
+
+    const debouncedSet = useMemo(() => {
+        return debounce((text: string) => setDebouncedKeyword(text), 300)
+    }, []);
+
+    const textInputRef = useRef<TextInput>(null);
 
     const dispatch = useAppDispatch();
     const airportMetaDataList = useAppSelector((state: RootState) => {
@@ -29,17 +39,19 @@ export default function CitySelectScreen() {
         if (Object.keys(odPairMetaDataMap).length === 0) {
             dispatch(fetchOdPairMetaData())
         }
-    }, []);
+        textInputRef.current?.focus();
 
+    }, []);
+    useEffect(() => {
+        debouncedSet.cancel()
+    }, [debouncedSet]);
 
     const departureAirport = useAppSelector((state) => state.searchFlightParam.data.departure);
     const arrivalAirport = useAppSelector((state) => state.searchFlightParam.data.arrival);
 
+    type AirportDetailWithKey = { key: string } & AirportMetaData
 
-    useEffect(() => {
-        console.log(cityDirectionType)
-        console.log(departureAirport.selectedAirportCode)
-        console.log(arrivalAirport.selectedAirportCode)
+    const fullList = useMemo(() => {
         if ('arrival' === cityDirectionType && departureAirport.selectedAirportCode) {
             const fullList = odPairMetaDataMap[departureAirport.selectedAirportCode as string]
                 ?.destinations
@@ -50,9 +62,8 @@ export default function CitySelectScreen() {
                         ...airportDetail
                     }
                 }) ?? []
-            setShownCitySelectList(fullList)
+            return fullList
         } else if ('departure' === cityDirectionType && arrivalAirport.selectedAirportCode) {
-            console.log(55)
             const fullList = odPairMetaDataMap[arrivalAirport.selectedAirportCode as string]
                 ?.destinations
                 ?.map((key: string) => {
@@ -62,28 +73,42 @@ export default function CitySelectScreen() {
                         ...airportDetail
                     }
                 }) ?? []
-            setShownCitySelectList(fullList)
+            return fullList
         } else {
             const fullList = Object.entries(odPairMetaDataMap)
                 .filter(([key]) => airportMetaDataList[key])
                 .map(([key, value]) => {
                     const airportDetail = airportMetaDataList[key]
                     return {
-                        key,
+                        key: key,
                         ...airportDetail
                     }
                 }).map(item => {
                     return item
                 })
-            setShownCitySelectList(fullList)
+            return fullList
         }
-
     }, [odPairMetaDataMap, airportMetaDataList]);
 
-    const filteredList = shownCitySelectList.filter(item => {
-        return item.airport?.defaultName?.toLocaleLowerCase().includes(keyword.toLocaleLowerCase())
-    })
+    const filteredList = useMemo(() => {
+        return fullList.filter(item => {
+            return item.airport?.defaultName?.toLocaleLowerCase().includes(debouncedKeyword.toLocaleLowerCase())
+        })
+    }, [fullList, debouncedKeyword])
 
+
+    function mapListToSections(list: AirportDetailWithKey []): { title: string, data: AirportDetailWithKey[] }[] {
+        const groupByCountry: Record<string, AirportDetailWithKey[]> = {}
+        list.forEach(item => {
+            const country = item.country?.defaultName ?? 'Other';
+            (groupByCountry[country] ??= []).push(item)
+        })
+
+        return Object.entries(groupByCountry).map(([title, data]) => ({
+            title,
+            data
+        }))
+    }
 
     return (
         <View style={{flex: 1}}>
@@ -97,13 +122,14 @@ export default function CitySelectScreen() {
                 }}/>
             <View style={styles.textInputContainer}>
                 <TextInput style={styles.textInput}
+                           ref={textInputRef}
                            value={keyword}
                            onChangeText={(keyword) => {
+                               setKeyword(keyword)
+                               debouncedSet(keyword)
 
-                               return setKeyword(keyword)
                            }}
                            placeholder="Enter Airport"
-
                            clearButtonMode={"while-editing"}
                            placeholderTextColor={'rgb(130 130 130 / 0.6)'}
 
@@ -117,9 +143,9 @@ export default function CitySelectScreen() {
                 </Pressable>
             </View>
             <View style={styles.cityListContainer}>
-                <FlatList
-                    data={filteredList}
-                    keyExtractor={(item) => item.key}
+                <SectionList
+                    sections={mapListToSections(filteredList)}
+                    keyExtractor={(item, inex) => item.key}
                     renderItem={({item}) => (
                         <Pressable style={styles.cityButton} onPress={() => {
 
@@ -155,8 +181,15 @@ export default function CitySelectScreen() {
                         }}>
                             <Text>{item.airport?.defaultName}({item.key})</Text>
                             <Text>{item.city?.defaultName}</Text>
-                        </Pressable>)}>
-                </FlatList>
+                        </Pressable>)}
+                    stickySectionHeadersEnabled={false}
+                    renderSectionHeader={({section}) => (
+                        <View style={styles.titleContainer}>
+                            <Text style={styles.titleText}>{section.title}</Text>
+                        </View>
+                    )}
+                >
+                </SectionList>
             </View>
 
         </View>
@@ -164,6 +197,14 @@ export default function CitySelectScreen() {
 }
 
 const styles = StyleSheet.create({
+    titleContainer: {
+        backgroundColor: 'rgb(40,99,99)',
+        paddingLeft: 10
+    },
+    titleText: {
+        // fontWeight: "bold",
+        color: "white"
+    },
     cityListContainer: {
         flex: 1,
     },
