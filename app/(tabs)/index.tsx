@@ -13,12 +13,13 @@ import SearchTab from "@/components/SearchTab";
 import CitySelectRow from "@/components/CitySelectRow";
 import DirectionRadioRow from "@/components/DirectionRadioRow";
 import CheckStatusButton from "@/components/CheckStatusButton";
-import TimeSelectButton from "@/components/TimeSelectButton";
-import FlightDetail from "@/components/FlightDetail";
+import TimeSelectDropdownList from "@/components/TimeSelectDropdownList";
+import FlightStatus from "@/components/FlightStatus";
 import {FlightStatusResponse} from "@/types/flightStatusResponse";
 import {getFlightStatus} from "@/api/client";
 import dayjs from "dayjs";
 import {useAppSelector} from "@/store/hooks";
+import TimeSelectButton from "@/components/TimeSelectButton";
 
 export default function SearchScreen() {
 
@@ -44,6 +45,7 @@ export default function SearchScreen() {
         setLoading(true)
         getFlightStatus(dayjs(selectedDate.date).format("YYYY-MM-DD"), direction, departureAirport.selectedAirportCode, arrivalAirport.selectedAirportCode,)
             .then((result) => {
+                console.log(result)
                 setAvailableFlightList(result)
                 setLoading(false)
             })
@@ -56,7 +58,6 @@ export default function SearchScreen() {
     return (
 
         <View style={styles.container}>
-
             <SearchTab activeTab={activeTab}/>
             <View style={styles.contentContainer}>
                 {activeTab === 0 && (<View style={{flex: 1}}>
@@ -84,9 +85,9 @@ export default function SearchScreen() {
                                                        activeDirection={direction}></DirectionRadioRow>
 
                                 </View>
-                                <TimeSelectButton showDates={showDatesDropList}
-                                                  selectedDate={selectedDate}
-                                                  onShowDatesChange={setShowDatesDropList}></TimeSelectButton>
+                                <TimeSelectDropdownList showDateDropdownList={showDatesDropList}
+                                                        selectedDate={selectedDate}
+                                                        onShowDateDropdownListChange={setShowDatesDropList}></TimeSelectDropdownList>
 
 
                             </View>
@@ -102,10 +103,11 @@ export default function SearchScreen() {
                                     timetable online
                                 </Text>
                             </View>
-
                             <CheckStatusButton clickCheckStatusButton={clickCheckStatusButton}></CheckStatusButton>
                             {(availableFlightList.flights?.length ?? 0) > 0 &&
-                                <FlightDetail availableFlightList={availableFlightList}></FlightDetail>}
+                                (<TimeSelectButton clickCheckStatusButton={clickCheckStatusButton}></TimeSelectButton>)}
+                            {(availableFlightList.flights?.length ?? 0) > 0 &&
+                                <FlightStatus availableFlightList={availableFlightList}></FlightStatus>}
                         </ScrollView>
 
 
@@ -125,10 +127,10 @@ export default function SearchScreen() {
                                 <TextInput style={styles.flightNumberInput} placeholder={"Flight Number"}></TextInput>
                             </View>
                             <View style={styles.directionAndDateContainer}>
-                                <TimeSelectButton showDates={showDatesDropList}
-                                                  selectedDate={selectedDate}
-                                                  onShowDatesChange={setShowDatesDropList}
-                                ></TimeSelectButton>
+                                <TimeSelectDropdownList showDateDropdownList={showDatesDropList}
+                                                        selectedDate={selectedDate}
+                                                        onShowDateDropdownListChange={setShowDatesDropList}
+                                ></TimeSelectDropdownList>
                             </View>
                             <View style={styles.tipsContainer}>
                                 <Text style={styles.tipsText}>

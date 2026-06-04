@@ -4,6 +4,7 @@ import searchFlightReducer from "@/store/searchFlightParamSlice";
 import odPairMetaDataReducer from "@/store/odPairMetaDataSlice";
 import {persistReducer, persistStore} from "redux-persist"
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import selectedFlighteducer from "@/store/selectedFlight";
 
 
 const rootReducer = combineReducers(
@@ -11,6 +12,7 @@ const rootReducer = combineReducers(
         airportMetaData: airportMetaDataReducer,
         odPairMetaData: odPairMetaDataReducer,
         searchFlightParam: searchFlightReducer,
+        selectFlight: selectedFlighteducer
 
     }
 );

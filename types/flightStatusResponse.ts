@@ -30,7 +30,7 @@ export type Flight = {
     legs: Leg[]
 }
 
-type Leg = {
+export type Leg = {
     status?: string
     statusCondition?: string
     hideETAETDsection: boolean,

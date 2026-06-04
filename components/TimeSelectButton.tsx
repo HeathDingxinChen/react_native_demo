@@ -1,18 +1,17 @@
-import {Pressable, StyleSheet, Text, View, Modal} from 'react-native'
-import {Ionicons} from "@expo/vector-icons";
-import {useAppDispatch} from "@/store/hooks";
-import {DateFormat, setDate} from "@/store/searchFlightParamSlice";
+import {Pressable, StyleSheet, Text, View, Modal, Touchable, TouchableOpacity} from 'react-native'
+import {useAppDispatch, useAppSelector} from "@/store/hooks";
+import {setDate} from "@/store/searchFlightParamSlice";
+import dayjs from "dayjs";
 
-type PropTypes = {
-    showDates: boolean,
-    onShowDatesChange: (value: boolean) => void,
-    selectedDate: DateFormat
-};
+type Props = {
 
-function TimeSelectButton({showDates, selectedDate, onShowDatesChange, }: PropTypes) {
+    clickCheckStatusButton: () => void
+}
 
+function TimeSelectButton({clickCheckStatusButton}: Props) {
 
     const dispatch = useAppDispatch();
+    const selectedDate = useAppSelector(state => state.searchFlightParam.data.date);
 
 
     const dateList = [-3, -2, -1, 0, 1, 2, 3].map(offset => {
@@ -23,85 +22,65 @@ function TimeSelectButton({showDates, selectedDate, onShowDatesChange, }: PropTy
 
     const dateLabelList = dateList.map(date => {
         return {
-            dateStr: date.toLocaleDateString('en-GB', {weekday: 'short', day: '2-digit', month: 'short'}),
+            dateStr: date.toLocaleDateString('en-GB', {weekday: 'short', day: '2-digit',}),
+            weekdayStr: date.toLocaleDateString('en-GB', {weekday: 'short'}),
+            dayStr: date.toLocaleDateString('en-GB', {day: '2-digit',}),
             date: date.toISOString()
         };
     })
 
+    function compareDate(date1: string | null, date2: string | null) {
+        if (!date1 || !date2) return false
+        return dayjs(date1).format("YYYY-MM-DD") === dayjs(date2).format("YYYY-MM-DD")
+    }
 
     return (
         <View>
             <View style={[styles.dateContainer]}>
-                <Pressable style={styles.dateButton} onPress={() => {
-                    onShowDatesChange(!showDates)
-                }}>
-                    <Text style={styles.dateText}>{selectedDate.dateStr}</Text>
-                    <Ionicons style={styles.dateIcon} name="chevron-down" size={20}
-                              color="rgb(50,115,140)"/>
-                </Pressable>
+                {dateLabelList.map((item, index) => {
+                    return (<TouchableOpacity
+                        style={[styles.dateButton, compareDate(selectedDate.date, item.date) && styles.highLightDateButton]}
+                        key={index} onPress={() => {
+                        dispatch(setDate(item))
+                        clickCheckStatusButton();
+                    }}>
+                        <Text
+                            style={[styles.dateText, , compareDate(selectedDate.date, item.date) && styles.highLightDateText]}>{item.weekdayStr}</Text>
+                        <Text
+                            style={[styles.dateText, , compareDate(selectedDate.date, item.date) && styles.highLightDateText]}>{item.dayStr}</Text>
+                    </TouchableOpacity>)
+                })}
             </View>
-
-
-            <Modal visible={showDates}
-                   animationType="slide"
-                   transparent={true}
-                   onRequestClose={() => onShowDatesChange(false)}>
-                <Pressable style={styles.backdrop} onPress={() => onShowDatesChange(false)}>
-                    <View style={styles.modalContent}>
-                        {dateLabelList.map((item) => (
-                            <Pressable key={item.dateStr} onPress={() => {
-                                dispatch(setDate(item))
-                                onShowDatesChange(false)
-                            }}>
-                                <Text style={styles.dropdownItem}>{item.dateStr}</Text>
-                            </Pressable>
-                        ))}
-                    </View>
-                </Pressable>
-
-            </Modal>
         </View>
     )
-        ;
+
 }
 
 const styles = StyleSheet.create({
     dateContainer: {
-        backgroundColor: 'white',
-
+        marginTop: 15,
+        flexDirection: 'row',
+        justifyContent: 'space-evenly'
     },
     dateButton: {
-        flexDirection: 'row',
-        alignItems: "center",
-        justifyContent: 'space-between',
-        flexWrap: 'nowrap',
-        height: 50
+        backgroundColor: 'white',
+        borderRadius: 25,
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: 50,
+        width: 50
     },
-    dateIcon: {
-        marginRight: 10
+    highLightDateButton: {
+        backgroundColor: 'rgb(40,99,99)'
+    },
+    highLightDateText: {
+        fontSize: 14,
+        fontWeight: "bold",
+        color: "white"
     },
     dateText: {
-        fontSize: 16,
-        marginLeft: 10,
-        color: 'rgb(133,131,131)',
-    },
-    dropdownItem: {
-        fontSize: 16,
-        paddingVertical: 14,
-        paddingHorizontal: 20,
-        borderBottomWidth: 1,
-        borderBottomColor: 'rgb(133,131,131)'
-    },
-    backdrop: {
-        flex: 1,
-        backgroundColor: 'rgba(0,0,0,0.4)',
-        justifyContent: 'flex-end',
-    },
-    modalContent: {
-        backgroundColor: 'white',
-        borderRadius: 15,
-        paddingHorizontal: 10,
-
+        color: 'rgb(78 78 78)',
+        fontSize: 12
     },
 })
 
