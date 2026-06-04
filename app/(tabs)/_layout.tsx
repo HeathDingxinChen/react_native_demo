@@ -1,4 +1,4 @@
-import {Tabs, Stack} from 'expo-router';
+import {Stack} from 'expo-router';
 import React from 'react';
 
 import {useColorScheme} from '@/hooks/use-color-scheme';

@@ -1,4 +1,4 @@
-import {Pressable, StyleSheet, Text, View, Modal} from 'react-native'
+import {Modal, Pressable, StyleSheet, Text, View} from 'react-native'
 import {Ionicons} from "@expo/vector-icons";
 import {useAppDispatch} from "@/store/hooks";
 import {DateFormat, setDate} from "@/store/searchFlightParamSlice";
@@ -9,7 +9,7 @@ type PropTypes = {
     selectedDate: DateFormat
 };
 
-function TimeSelectDropdownList({showDateDropdownList, selectedDate, onShowDateDropdownListChange, }: PropTypes) {
+function TimeSelectDropdownList({showDateDropdownList, selectedDate, onShowDateDropdownListChange,}: PropTypes) {
 
 
     const dispatch = useAppDispatch();

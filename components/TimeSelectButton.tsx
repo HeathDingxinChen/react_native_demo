@@ -1,4 +1,4 @@
-import {Pressable, StyleSheet, Text, View, Modal, Touchable, TouchableOpacity} from 'react-native'
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native'
 import {useAppDispatch, useAppSelector} from "@/store/hooks";
 import {setDate} from "@/store/searchFlightParamSlice";
 import dayjs from "dayjs";

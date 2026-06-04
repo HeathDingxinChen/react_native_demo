@@ -1,13 +1,12 @@
-import {Pressable, StyleSheet, TextInput, Text, View, Dimensions, FlatList, SectionList} from "react-native";
+import {Dimensions, Pressable, SectionList, StyleSheet, Text, TextInput, View} from "react-native";
 import {router, Stack, useLocalSearchParams} from 'expo-router';
 import {useEffect, useMemo, useRef, useState} from "react";
-import {AppDispatch, RootState} from "@/store/store";
+import {RootState} from "@/store/store";
 import {fetchAirportsMetaData} from "@/store/airportsMetaDataSlice";
 import {useAppDispatch, useAppSelector} from "@/store/hooks";
 import {setArrival, setDeparture} from "@/store/searchFlightParamSlice";
 import {fetchOdPairMetaData} from "@/store/odPairMetaDataSlice";
-import {AirportMetaData, AirportMetaDataResponse} from "@/types/airportMetaData";
-import groupBy from 'lodash/groupBy'
+import {AirportMetaData} from "@/types/airportMetaData";
 import debounce from 'lodash/debounce'
 
 export default function CitySelectScreen() {

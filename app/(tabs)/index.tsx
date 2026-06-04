@@ -1,12 +1,4 @@
-import {
-    StyleSheet,
-    Text,
-    View,
-    ScrollView,
-    Linking,
-    TextInput,
-    ActivityIndicator, Alert
-} from 'react-native';
+import {ActivityIndicator, Alert, Linking, ScrollView, StyleSheet, Text, TextInput, View} from 'react-native';
 import {useState} from "react";
 
 import SearchTab from "@/components/SearchTab";

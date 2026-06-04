@@ -1,7 +1,7 @@
 import {Stack} from "expo-router";
 import {StyleSheet, Text, View} from "react-native";
 import {Ionicons} from "@expo/vector-icons";
-import {Flight, Leg} from "@/types/flightStatusResponse";
+import {Leg} from "@/types/flightStatusResponse";
 import {useAppSelector} from "@/store/hooks";
 
 export default function FlightDetailScreen() {
@@ -12,7 +12,7 @@ export default function FlightDetailScreen() {
 
     function buildTips(legItem: Leg) {
         let placeholders = legItem?.descriptionMsg?.placeholders;
-        if(!placeholders) return ''
+        if (!placeholders) return ''
 
         if (placeholders.includes('{{ATA}}')) {
             placeholders = placeholders.replace('{{ATA}}', getTimeFromDate(legItem.arrival.latestUpdatedTime.date))
@@ -44,7 +44,7 @@ export default function FlightDetailScreen() {
 
     function getCityName(airportCode: string) {
         const airportMetaDataElement = airportMetaDataMap[airportCode];
-        return airportMetaDataElement?.airport?.defaultName?? ''
+        return airportMetaDataElement?.airport?.defaultName ?? ''
     }
 
     return (<View style={{flex: 1}}>
@@ -74,7 +74,7 @@ export default function FlightDetailScreen() {
                                 ]}>{buildTips(legItem)}</Text>
                         </View>
                         <View
-                            style={[styles.flightDetailContainer]} >
+                            style={[styles.flightDetailContainer]}>
 
                             <View style={styles.flightMarkContainer}>
                                 <View style={styles.airportMark}>

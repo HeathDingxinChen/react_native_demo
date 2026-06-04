@@ -1,4 +1,4 @@
-import {Dimensions, Pressable, StyleSheet, Text, View} from 'react-native'
+import {Pressable, StyleSheet, Text, View} from 'react-native'
 
 type PropTypes = {
     clickCheckStatusButton: () => void

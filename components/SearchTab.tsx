@@ -1,7 +1,6 @@
-import {Text, StyleSheet, View, Pressable, Dimensions} from 'react-native'
+import {Pressable, StyleSheet, Text, View} from 'react-native'
 import {useAppDispatch} from "@/store/hooks";
 import {setActiveTab} from "@/store/searchFlightParamSlice";
-
 
 
 type Props = {
@@ -12,6 +11,7 @@ type Props = {
 export default function SearchTab({activeTab}: Props) {
 
     const dispatch = useAppDispatch();
+
     function onPressSearchTypeTab(value: number) {
         dispatch(setActiveTab(value))
     }

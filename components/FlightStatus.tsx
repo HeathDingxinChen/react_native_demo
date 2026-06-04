@@ -31,7 +31,7 @@ function FlightStatus({availableFlightList}: PropTypes) {
 
     function getCityName(airportCode: string) {
         const airportMetaDataElement = airportMetaDataMap[airportCode];
-        return airportMetaDataElement.airport.defaultName
+        return airportMetaDataElement?.airport?.defaultName ?? ''
     }
 
     function getTimeFromDate(dateStr: string) {
